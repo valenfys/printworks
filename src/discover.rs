@@ -69,7 +69,7 @@ mod tests {
         let file = dir.path().join("shot.txt");
         touch(&file);
 
-        let found = discover(&[file.clone()], false).unwrap();
+        let found = discover(std::slice::from_ref(&file), false).unwrap();
         assert_eq!(found.len(), 1);
         assert_eq!(found[0].path, file);
         assert_eq!(found[0].base, dir.path());
