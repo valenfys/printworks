@@ -16,8 +16,8 @@ pub fn discover(inputs: &[PathBuf], recursive: bool) -> Result<Vec<DiscoveredFil
     let mut found = Vec::new();
 
     for input in inputs {
-        let meta = std::fs::metadata(input)
-            .with_context(|| format!("reading {}", input.display()))?;
+        let meta =
+            std::fs::metadata(input).with_context(|| format!("reading {}", input.display()))?;
 
         if meta.is_file() {
             let base = input

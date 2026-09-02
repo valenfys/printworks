@@ -4,7 +4,11 @@ use std::str::FromStr;
 use clap::{Args, Parser, Subcommand, ValueEnum};
 
 #[derive(Parser)]
-#[command(name = "printworks", version, about = "Convert camera RAW photos into JPEGs")]
+#[command(
+    name = "printworks",
+    version,
+    about = "Convert camera RAW photos into JPEGs"
+)]
 pub struct Cli {
     /// Increase log verbosity (-v, -vv)
     #[arg(short, long, action = clap::ArgAction::Count, global = true)]
@@ -107,9 +111,7 @@ impl FromStr for WhiteBalance {
             "flash" => Ok(WhiteBalance::Temp(5500.0, 1.0)),
             other => {
                 let (temp, tint) = other.split_once(':').ok_or_else(|| {
-                    format!(
-                        "invalid --wb value '{other}': expected a preset name or <temp>:<tint>"
-                    )
+                    format!("invalid --wb value '{other}': expected a preset name or <temp>:<tint>")
                 })?;
                 let temp: f32 = temp
                     .parse()

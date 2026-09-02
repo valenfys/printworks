@@ -2,8 +2,8 @@ use std::path::PathBuf;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 use anyhow::{Context, Result};
-use image::codecs::jpeg::JpegEncoder;
 use image::ColorType;
+use image::codecs::jpeg::JpegEncoder;
 use indicatif::{ProgressBar, ProgressStyle};
 use rayon::prelude::*;
 
@@ -80,7 +80,11 @@ pub fn run(args: &ConvertArgs) -> Result<()> {
     Ok(())
 }
 
-fn convert_one(file: &DiscoveredFile, args: &ConvertArgs, settings: &DevelopSettings) -> Result<Outcome> {
+fn convert_one(
+    file: &DiscoveredFile,
+    args: &ConvertArgs,
+    settings: &DevelopSettings,
+) -> Result<Outcome> {
     let out_path = output_path(file, args);
 
     if out_path.exists() && !args.overwrite {
