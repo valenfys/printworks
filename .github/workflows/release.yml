@@ -14,63 +14,73 @@ env:
 
 jobs:
   build:
-    name: build (${{ matrix.target }})
+    name: build (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         include:
           - os: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
+            targets: x86_64-unknown-linux-gnu
           - os: ubuntu-24.04-arm
-            target: aarch64-unknown-linux-gnu
-          - os: macos-13
-            target: x86_64-apple-darwin
+            targets: aarch64-unknown-linux-gnu
+          # A single Apple-Silicon runner cross-builds both macOS
+          # architectures (Xcode's toolchain supports both targets
+          # natively), since dedicated Intel (macos-13) runners are
+          # scarce/deprecated on GitHub's hosted fleet and can queue
+          # indefinitely.
           - os: macos-14
-            target: aarch64-apple-darwin
+            targets: "aarch64-apple-darwin,x86_64-apple-darwin"
           - os: windows-latest
-            target: x86_64-pc-windows-msvc
+            targets: x86_64-pc-windows-msvc
 
     steps:
       - uses: actions/checkout@v5
 
       - uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.target }}
+          targets: ${{ matrix.targets }}
 
       - uses: Swatinem/rust-cache@v2
         with:
-          key: ${{ matrix.target }}
+          key: ${{ matrix.os }}
 
-      - name: Build
-        run: cargo build --release --locked --target ${{ matrix.target }}
-
-      - name: Package (unix)
+      - name: Build, package (unix)
         if: runner.os != 'Windows'
         shell: bash
         run: |
-          staging="${BIN_NAME}-${{ github.ref_name }}-${{ matrix.target }}"
-          mkdir "$staging"
-          cp "target/${{ matrix.target }}/release/${BIN_NAME}" "$staging/"
-          cp README.md "$staging/"
-          tar czf "${staging}.tar.gz" "$staging"
-          echo "ASSET=${staging}.tar.gz" >> "$GITHUB_ENV"
+          mkdir -p dist
+          IFS=',' read -ra targets <<< "${{ matrix.targets }}"
+          for target in "${targets[@]}"; do
+            cargo build --release --locked --target "$target"
+            staging="${BIN_NAME}-${{ github.ref_name }}-${target}"
+            mkdir "$staging"
+            cp "target/${target}/release/${BIN_NAME}" "$staging/"
+            cp README.md "$staging/"
+            tar czf "dist/${staging}.tar.gz" "$staging"
+            rm -rf "$staging"
+          done
 
-      - name: Package (windows)
+      - name: Build, package (windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          $staging = "${env:BIN_NAME}-${{ github.ref_name }}-${{ matrix.target }}"
-          New-Item -ItemType Directory -Path $staging | Out-Null
-          Copy-Item "target/${{ matrix.target }}/release/${env:BIN_NAME}.exe" $staging/
-          Copy-Item README.md $staging/
-          Compress-Archive -Path $staging -DestinationPath "${staging}.zip"
-          Add-Content -Path $env:GITHUB_ENV -Value "ASSET=${staging}.zip"
+          New-Item -ItemType Directory -Path dist | Out-Null
+          foreach ($target in "${{ matrix.targets }}".Split(",")) {
+            cargo build --release --locked --target $target
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+            $staging = "${env:BIN_NAME}-${{ github.ref_name }}-$target"
+            New-Item -ItemType Directory -Path $staging | Out-Null
+            Copy-Item "target/$target/release/${env:BIN_NAME}.exe" $staging/
+            Copy-Item README.md $staging/
+            Compress-Archive -Path $staging -DestinationPath "dist/${staging}.zip"
+            Remove-Item -Recurse -Force $staging
+          }
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.target }}
-          path: ${{ env.ASSET }}
+          name: ${{ matrix.os }}
+          path: dist/*
           if-no-files-found: error
 
   release:
