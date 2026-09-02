@@ -1,7 +1,7 @@
 # Sample file provenance
 
 These RAW files are used to exercise `printworks` end-to-end and to give
-new users something to run the examples in the main README against.
+new users something to run the samples in the main README against.
 All four are dedicated to the public domain
 ([CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/)) by their
 original photographers and sourced from
