@@ -125,4 +125,10 @@ cargo fmt
 
 ## License
 
-The binary links against `imagepipe`, which is LGPL-3.0-only.
+printworks is licensed under [Apache-2.0](LICENSE).
+
+It statically links against `imagepipe` (LGPL-3.0-only) and `rawloader`
+(LGPL-2.1); both permit this as long as their license terms are
+satisfied, which does not require printworks itself to be LGPL/GPL. See
+[`THIRD-PARTY-LICENSES.md`](THIRD-PARTY-LICENSES.md) for the required
+notices and the bundled license texts in [`licenses/`](licenses).
