@@ -6,7 +6,7 @@ license = "Apache-2.0"
 description = "Convert camera RAW photos to full-resolution JPEGs"
 repository = "https://github.com/valenfys/printworks"
 readme = "README.md"
-exclude = ["examples/raw/*.CR2", "examples/raw/*.NEF", "examples/raw/*.RW2", "examples/raw/*.ARW"]
+exclude = ["samples/raw/*.CR2", "samples/raw/*.NEF", "samples/raw/*.RW2", "samples/raw/*.ARW"]
 
 [dependencies]
 anyhow = "1.0.104"
