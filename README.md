@@ -74,6 +74,38 @@ machine-readable array instead of text.
 `-v` / `-vv` increase log verbosity; `-q, --quiet` suppresses
 non-error output. Both apply to either subcommand.
 
+## Examples
+
+[`examples/raw`](examples/raw) has a handful of real RAW files (Canon
+CR2, Nikon NEF, Panasonic RW2, Sony ARW — see
+[`ATTRIBUTION.md`](examples/raw/ATTRIBUTION.md) for licensing) so you
+can try the commands above without hunting down a RAW file first:
+
+```sh
+# Inspect all four without converting anything
+printworks info examples/raw -r
+
+# Convert them all into examples/raw/jpg
+printworks convert examples/raw -r -o examples/raw/jpg
+
+# Convert a single file with adjustments
+printworks convert examples/raw/canon-rebelxt.CR2 --exposure 0.5 --wb daylight
+```
+
+`printworks info examples/raw -r` prints, among other things:
+
+```
+examples/raw/canon-rebelxt.CR2
+  camera:      Canon Rebel XT
+  dimensions:  3516x2328
+  orientation: Rotate270
+  exposure:    1/640 s
+  aperture:    f/5.6
+  iso:         100
+  focal len:   10.0 mm
+  captured:    2008:05:25 18:32:29
+```
+
 ## Supported RAW formats
 
 Any format `rawloader` can decode: ARW, CR2, CRW, DCR, DCS, DNG, ERF,
