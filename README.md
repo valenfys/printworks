@@ -1,5 +1,7 @@
 # printworks
 
+[![Crates.io](https://img.shields.io/crates/v/printworks.svg)](https://crates.io/crates/printworks)
+
 A command-line tool that converts camera RAW photos (CR2, NEF, ARW, RAF,
 RW2, ORF, PEF, DNG, and more) into full-resolution JPEGs.
 
@@ -11,6 +13,14 @@ native build toolchain required. EXIF metadata (camera, lens, exposure,
 date, GPS) is read from the RAW file and copied into the output JPEG.
 
 ## Install / build
+
+### From crates.io
+
+```sh
+cargo install printworks
+```
+
+### From source
 
 ```sh
 cargo build --release
